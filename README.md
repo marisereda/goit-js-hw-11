@@ -1,101 +1,122 @@
-**Read in other languages: [Русский](README.md), [Polski](README.pl.md).**
+Acceptance criteria goit-js-hw-11 repository created. In your submitted
+homework, there are two links: to the source files and your working page on
+GitHub Pages. During live page visits, there are no errors or warnings generated
+in the console. Project built with parcel-project-template. For HTTP requests,
+the axios library is used. async/await syntax. For notifications, the notiflix
+library is used. Code formatted with Prettier. Task - image search Build a
+front-end part of a keyword search and image viewer application. Add some
+decoration to the interface elements. Check out the demo video of the app.
 
-# Parcel template
+Search form The form is originally in the HTML document. The user will enter a
+search string in the text field, and when submitting the form, an HTTP request
+must be made.
 
-Этот проект был создан при помощи Parcel. Для знакомства и настройки
-дополнительных возможностей [обратись к документации](https://parceljs.org/).
+<form class="search-form" id="search-form">
+  <input
+    type="text"
+    name="searchQuery"
+    autocomplete="off"
+    placeholder="Search images..."
+  />
+  <button type="submit">Search</button>
+</form>
 
-## Подготовка нового проекта
+HTTP requests Use the public API of the Pixabay service as a back-end. Sign up,
+get your unique access key and read the documentation.
 
-1. Убедись что на компьютере установлена LTS-версия Node.js.
-   [Скачай и установи](https://nodejs.org/en/) её если необходимо.
-2. Склонируй этот репозиторий.
-3. Измени имя папки с `parcel-project-template` на имя своего проекта.
-4. Создай новый пустой репозиторий на GitHub.
-5. Открой проект в VSCode, запусти терминал и свяжи проект с GitHub-репозиторием
-   [по инструкции](https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories#changing-a-remote-repositorys-url).
-6. Установи зависимости проекта в терминале командой `npm install` .
-7. Запусти режим разработки, выполнив команду `npm start`.
-8. Перейди в браузере по адресу [http://localhost:1234](http://localhost:1234).
-   Эта страница будет автоматически перезагружаться после сохранения изменений в
-   файлах проекта.
+Here is a list of query string parameters that you must specify:
 
-## Файлы и папки
+key - your unique API access key. q - search term. What the user will enter.
+image_type - image type. You only want photos, so set the value to photo.
+orientation - orientation of the photo. Set the value to horizontal.
+safesearch - filter by age. Set the value to true. The response will contain an
+array of images that meet the request parameters. Each image is described by an
+object, and you need only the following properties:
 
-- Все паршалы файлов стилей должны лежать в папке `src/sass` и импортироваться в
-  файлы стилей страниц. Например, для `index.html` файл стилей называется
-  `index.scss`.
-- Изображения добавляй в папку `src/images`. Сборщик оптимизирует их, но только
-  при деплое продакшн версии проекта. Все это происходит в облаке, чтобы не
-  нагружать твой компьютер, так как на слабых машинах это может занять много
-  времени.
+webformatURL - link to a small image for the list of cards. largeImageURL - link
+to a large image. tags - line with image description. Suitable for the alt
+attribute. likes - number of likes. views - number of views. comments - number
+of comments. downloads - number of downloads. If the back-end returns an empty
+array, then there are no matches. In this case, show a notification with the
+text "Sorry, there are no images matching your search query. Please try again.".
+For notifications, use this library: notiflix.
 
-## Деплой
+Gallery and image card The div.gallery element is originally in the HTML
+document, and the markup of the image cards needs to be rendered into it. When
+searching with a new keyword, you should completely clear the gallery content to
+avoid confusing results.
 
-Для настройки деплоя проекта необходимо выполнить несколько дополнительных шагов
-по настройке твоего репозитория. Зайди во вкладку `Settings` и в подсекции
-`Actions` выбери выбери пункт `General`.
+<div class="gallery">
+  <!-- Image cards -->
+</div>
 
-![GitHub actions settings](./assets/actions-config-step-1.png)
+Single image card markup template for the gallery.
 
-Пролистай страницу до последней секции, в которой убедись что выбраны опции как
-на следующем изображении и нажми `Save`. Без этих настроек у сборки будет
-недостаточно прав для автоматизации процесса деплоя.
+<div class="photo-card">
+  <img src="" alt="" loading="lazy" />
+  <div class="info">
+    <p class="info-item">
+      <b>Likes</b>
+    </p>
+    <p class="info-item">
+      <b>Views</b>
+    </p>
+    <p class="info-item">
+      <b>Comments</b>
+    </p>
+    <p class="info-item">
+      <b>Downloads</b>
+    </p>
+  </div>
+</div>
 
-![GitHub actions settings](./assets/actions-config-step-2.png)
+Pagination Pixabay API supports pagination and provides the page and per_page
+parameters. Make it so that each response contains 40 objects (20 by default).
 
-Продакшн версия проекта будет автоматически собираться и деплоиться на GitHub
-Pages, в ветку `gh-pages`, каждый раз когда обновляется ветка `main`. Например,
-после прямого пуша или принятого пул-реквеста. Для этого необходимо в файле
-`package.json` отредактировать поле `homepage` и скрипт `build`, заменив
-`your_username` и `your_repo_name` на свои, и отправить изменения на GitHub.
+Initially, the page parameter value must be 1. With each subsequent request, it
+must be increased by 1. When searching with a new keyword, the value of page
+must be reset to its initial value, since there will be pagination for a new
+collection of images. The HTML document already has the markup of the button
+used to execute the request for the next group of images and add markup to the
+already existing gallery items.
 
-```json
-"homepage": "https://your_username.github.io/your_repo_name/",
-"scripts": {
-  "build": "parcel build src/*.html --public-url /your_repo_name/"
-},
-```
+<button type="button" class="load-more">Load more</button>
 
-Далее необходимо зайти в настройки GitHub-репозитория (`Settings` > `Pages`) и
-выставить раздачу продакшн версии файлов из папки `/root` ветки `gh-pages`, если
-это небыло сделано автоматически.
+Initially, the button must be hidden. After the first request, the button
+appears in the interface under the gallery. When re-submitting the form, the
+button is first hidden and then displayed after the request. In response, the
+back-end returns the totalHits property - the total number of images that match
+the search criteria (for a free account). If the user has reached the end of the
+collection, hide the button and display a notification with the text: "We're
+sorry, but you've reached the end of search results.".
 
-![GitHub Pages settings](./assets/repo-settings.png)
+Optional ATTENTION The following features are optional, but they will be a good
+additional practice.
 
-### Статус деплоя
+Notification After the first request, for each new search, display a
+notification with the number of images found in total (totalHits property).
+Notification text: "Hooray! We found totalHits images."
 
-Статус деплоя крайнего коммита отображается иконкой возле его идентификатора.
+SimpleLightbox library Add the display of large images with the SimpleLightbox
+library for a full gallery.
 
-- **Желтый цвет** - выполняется сборка и деплой проекта.
-- **Зеленый цвет** - деплой завершился успешно.
-- **Красный цвет** - во время линтинга, сборки или деплоя произошла ошибка.
+In your markup, wrap each image card in a link as said in the documentation. The
+library has a refresh() method that must be called every time after adding a new
+group of image cards. In order to add the CSS code of the library to the
+project, you need to add one more import, aside from the one described in the
+documentation.
 
-Более детальную информацию о статусе можно посмотреть кликнув по иконке, и в
-выпадающем окне перейти по ссылке `Details`.
+// Described in documentation import SimpleLightbox from "simplelightbox"; //
+Additional styles import import "simplelightbox/dist/simple-lightbox.min.css";
 
-![Deployment status](./assets/status.png)
+Page scrolling Make smooth page scrolling after the request and rendering each
+next group of images. Here is a hint code for you. Figure it out for yourself.
 
-### Живая страница
+const { height: cardHeight } = document .querySelector(".gallery")
+.firstElementChild.getBoundingClientRect();
 
-Через какое-то время, обычно пару минут, живую страницу можно будет посмотреть
-по адресу указанному в отредактированном свойстве `homepage`. Например, вот
-ссылка на живую версию для этого репозитория
-[https://goitacademy.github.io/parcel-project-template](https://goitacademy.github.io/parcel-project-template).
+window.scrollBy({ top: cardHeight \* 2, behavior: "smooth", });
 
-Если открывается пустая страница, убедись что во вкладке `Console` нет ошибок
-связанных с неправильными путями к CSS и JS файлам проекта (**404**). Скорее
-всего у тебя неправильное значение свойства `homepage` или скрипта `build` в
-файле `package.json`.
-
-## Как это работает
-
-![How it works](./assets/how-it-works.png)
-
-1. После каждого пуша в ветку `main` GitHub-репозитория, запускается специальный
-   скрипт (GitHub Action) из файла `.github/workflows/deploy.yml`.
-2. Все файлы репозитория копируются на сервер, где проект инициализируется и
-   проходит сборку перед деплоем.
-3. Если все шаги прошли успешно, собранная продакшн версия файлов проекта
-   отправляется в ветку `gh-pages`. В противном случае, в логе выполнения
-   скрипта будет указано в чем проблема.
+Infinite scrolling Instead of the "Load more" button, you can make an infinite
+loading of images when scrolling the page. You are free to choose your ways of
+implementation and libraries.
