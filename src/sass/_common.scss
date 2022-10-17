@@ -1,5 +1,6 @@
 @import '~node_modules/modern-normalize/modern-normalize.css';
 
+$accent-color: #5181d3;
 body {
   display: flex;
   align-items: center;
@@ -10,32 +11,80 @@ body {
   margin-right: auto;
 }
 
-.search-form {
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+p {
+  margin: 0;
+}
+
+svg {
+  fill: $accent-color;
+}
+
+.search {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
   padding-top: 20px;
   padding-bottom: 20px;
   margin-bottom: 50px;
   width: 100%;
   font-size: 1.5rem;
-  background-color: #5181d3;
+  background-color: $accent-color;
 }
 
-.search-form input,
-.search-form button,
+.search__request,
+.search__settings {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search__request input,
+.search__request button,
 .load-more {
   height: 40px;
-  padding: 1px 10px;
+  padding: 1px 15px;
+  border: none;
+}
+.search__request input {
+  border-radius: 5px 0 0 5px;
+}
+
+.search__request button,
+.load-more {
+  cursor: pointer;
+  border-radius: 0 5px 5px 0;
+}
+
+.search__settings input {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.search__settings label {
+  font-size: 1.2rem;
+  color: white;
 }
 
 .gallery {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  list-style: none;
+  gap: 20px;
+  margin-bottom: 50px;
+  max-width: 1600px;
+
   flex-wrap: wrap;
+}
+
+.card {
+  box-shadow: 1px 1px 4px grey;
 }
 
 .card__img {
@@ -45,24 +94,89 @@ body {
 .card__list {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  list-style: none;
-  padding: 0;
+  justify-content: space-around;
+  padding: 10px 0;
+  color: rgba(0, 0, 0, 0.7);
 }
 
-.card__text {
-  text-align: center;
-  font-weight: bold;
+.card__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }
 
 .card__value {
   text-align: center;
+  font-weight: bold;
 }
 
 .load-more {
   font-size: 1.5rem;
+  background-color: $accent-color;
+  border-radius: 5px;
+  color: white;
+
   &.is-hidden {
     display: none;
+  }
+}
+
+// --------------------------------
+
+.loader {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+  margin: 15px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: shadowRolling 2s linear infinite;
+  margin-bottom: 50px;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+$loaderColor: $accent-color;
+@keyframes shadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0),
+      0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+  12% {
+    box-shadow: 100px 0 $loaderColor, 0px 0 rgba(255, 255, 255, 0),
+      0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+  25% {
+    box-shadow: 110px 0 $loaderColor, 100px 0 $loaderColor,
+      0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+  36% {
+    box-shadow: 120px 0 $loaderColor, 110px 0 $loaderColor, 100px 0 $loaderColor,
+      0px 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 130px 0 $loaderColor, 120px 0 $loaderColor, 110px 0 $loaderColor,
+      100px 0 $loaderColor;
+  }
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 $loaderColor,
+      120px 0 $loaderColor, 110px 0 $loaderColor;
+  }
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0),
+      130px 0 $loaderColor, 120px 0 $loaderColor;
+  }
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0),
+      200px 0 rgba(255, 255, 255, 0), 130px 0 $loaderColor;
+  }
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0),
+      200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
   }
 }

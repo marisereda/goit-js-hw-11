@@ -1,20 +1,20 @@
 import axios from 'axios';
+const URL = 'https://pixabay.com/api/';
+const KEY = '30496940-a6648cb8580d319c300be0950';
+const PAGE_SIZE = 40;
 
-export function getImages(searchData, page) {
+export async function getImages(searchQuery, page) {
   const params = {
-    key: '30496940-a6648cb8580d319c300be0950',
-    q: searchData,
+    key: KEY,
+    q: searchQuery,
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: true,
     page: page,
+    per_page: PAGE_SIZE,
   };
 
-  return axios.get('https://pixabay.com/api/', { params }).then(response => {
-    // if (!response.ok) {
-    //   throw new Error('nothing found');
-    // }
-    console.log('totalHits in response', response.data.totalHits);
-    return { data: response.data.hits, totalHits: response.data.totalHits };
-  });
+  const response = await axios.get(URL, { params });
+
+  return { data: response.data.hits, totalHits: response.data.totalHits };
 }

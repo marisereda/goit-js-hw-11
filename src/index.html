@@ -8,19 +8,30 @@
     <script type="module" src="./js/index.js"></script>
   </head>
   <body>
-    <form class="search-form" id="search-form">
-      <input
-        type="text"
-        name="searchQuery"
-        autocomplete="off"
-        placeholder="Search images..."
-      />
-      <button type="submit">Search</button>
+    <form class="search" id="search-form">
+      <div class="search__request">
+        <input
+          type="text"
+          name="searchQuery"
+          autocomplete="off"
+          placeholder="Search images..."
+        />
+        <button type="submit" name="submit">
+          <svg width="30" height="30">
+            <use href="./images/sprite.svg#icon-search"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="search__settings">
+        <input type="checkbox" id="autosearch" />
+        <label for="autosearch">apply infinite scrolling</label>
+      </div>
     </form>
 
     <ul class="gallery"></ul>
-    <button type="button" class="load-more">Load more</button>
-
+    <div class="guard"></div>
+    <button type="button" class="load-more is-hidden">Load more</button>
+    <span class="loader is-hidden"></span>
     <!-- ❗️❗️❗️ Add partials like so for every page -->
     <!-- <include src="./partials/example.html"></include> -->
   </body>
