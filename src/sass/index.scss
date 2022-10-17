@@ -1,2 +1,192 @@
-@import './common';
-@import './example';
+@import '~node_modules/modern-normalize/modern-normalize.css';
+
+$accent-color: #5181d3;
+$loaderColor: $accent-color;
+
+// ---- Common styles ----
+body {
+  padding-bottom: 50px;
+  text-align: center;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+p {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+svg {
+  fill: $accent-color;
+}
+
+// ---- Search styles ----
+.search {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 50px;
+  width: 100%;
+  font-size: 1.5rem;
+  background-color: $accent-color;
+}
+
+.search__request {
+  display: flex;
+}
+
+.search__request input,
+.search__request button {
+  padding: 5px 15px;
+  border: none;
+  line-height: 1;
+}
+.search__request input {
+  border-radius: 5px 0 0 5px;
+}
+
+.search__request button {
+  cursor: pointer;
+  border-radius: 0 5px 5px 0;
+}
+
+.search__settings {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search__settings input {
+  width: 20px;
+  height: 20px;
+}
+
+.search__settings label {
+  font-size: 1.2rem;
+  line-height: 1;
+  color: white;
+}
+
+// ---- Gallery styles ----
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 20px;
+  margin: 0 auto 50px;
+  max-width: 1600px;
+}
+
+.card {
+  box-shadow: 1px 1px 4px grey;
+}
+
+.card__img {
+  width: 350px;
+  height: 240px;
+  object-fit: cover;
+}
+
+.card__list {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 10px 0;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.card__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.card__value {
+  text-align: center;
+  font-weight: bold;
+}
+
+// ---- Button styles ----
+.load-more {
+  padding: 10px 15px;
+  font-size: 1.5rem;
+  color: white;
+  background-color: $accent-color;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+// ---- Loader styles ----
+.loader {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+  margin: 15px auto;
+  position: relative;
+  color: white;
+  left: -100px;
+  box-sizing: border-box;
+  animation: shadowRolling 2s linear infinite;
+  margin-bottom: 50px;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+@keyframes shadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0),
+      0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+  12% {
+    box-shadow: 100px 0 $loaderColor, 0px 0 rgba(255, 255, 255, 0),
+      0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+  25% {
+    box-shadow: 110px 0 $loaderColor, 100px 0 $loaderColor,
+      0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+  36% {
+    box-shadow: 120px 0 $loaderColor, 110px 0 $loaderColor, 100px 0 $loaderColor,
+      0px 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 130px 0 $loaderColor, 120px 0 $loaderColor, 110px 0 $loaderColor,
+      100px 0 $loaderColor;
+  }
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 $loaderColor,
+      120px 0 $loaderColor, 110px 0 $loaderColor;
+  }
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0),
+      130px 0 $loaderColor, 120px 0 $loaderColor;
+  }
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0),
+      200px 0 rgba(255, 255, 255, 0), 130px 0 $loaderColor;
+  }
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0),
+      200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
+}

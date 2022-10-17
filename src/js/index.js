@@ -9,87 +9,102 @@ import { formatNumber } from './formatNumber';
 import markup from '../templates/card_markup.hbs';
 import sprite from '../images/sprite.svg';
 
-const observerOptions = {
-  root: null,
+const state = {
+  page: 1,
+  renderedImagesAmount: 0,
+  foundImagesAmount: 0,
+  searchQuery: '',
+};
+const observer = new IntersectionObserver(observe, {
   rootMargin: '30px',
   threshold: 1.0,
-};
-const observer = new IntersectionObserver(observe, observerOptions);
-
+});
 const gallery = new SimpleLightbox('.gallery a');
 const refs = getRefs();
-
-let page = 1;
-let renderedImagesAmount = 0;
-let searchData = '';
+bindEvents();
 
 // ======================================================
 
-refs.form.addEventListener('submit', onSubmit);
-refs.form.elements.searchQuery.addEventListener('focus', () => {
-  refs.checkbox.disabled = false;
-  refs.form.elements.submit.disabled = false;
-});
-refs.loadMoreBtn.addEventListener('click', loadMore);
+function bindEvents() {
+  refs.form.addEventListener('submit', onSubmit);
+  refs.form.elements.searchQuery.addEventListener('focus', () => {
+    refs.checkbox.disabled = false;
+    refs.form.elements.submit.disabled = false;
+  });
+  refs.loadMoreBtn.addEventListener('click', loadMore);
+  refs.checkbox.addEventListener('change', () => {
+    if (state.renderedImagesAmount !== 0) {
+      processAfterRequest();
+    }
+  });
+}
 
 //-------------------------------------------------------
+
 async function onSubmit(event) {
   event.preventDefault();
   const target = event.target;
-  searchData = target.elements.searchQuery.value.trim();
-  if (!searchData) {
+  state.searchQuery = target.elements.searchQuery.value.trim();
+  if (!state.searchQuery) {
+    initState();
     return;
   }
 
-  newQueryPreset();
-  await showImages(searchData, page);
-  refs.form.elements.submit.disabled = false;
-}
-//-------------------------------------------------------
-function newQueryPreset() {
-  refs.checkbox.disabled = true;
-  refs.gallery.innerHTML = '';
-  renderedImagesAmount = 0;
-  page = 1;
+  initState();
+  processBeforeRequest();
 
+  const requestResult = await makeRequest(state.searchQuery, state.page);
+  if (!requestResult) {
+    processAfterRequest();
+    return;
+  }
+  state.foundImagesAmount = requestResult.totalHits;
+  showRequestResult(requestResult.data);
+  processAfterRequest();
+}
+
+//-------------------------------------------------------
+
+function initState() {
+  refs.gallery.innerHTML = '';
+  state.page = 1;
+  state.renderedImagesAmount = 0;
+  state.foundImagesAmount = 0;
+}
+
+//-------------------------------------------------------
+
+function processBeforeRequest() {
+  refs.checkbox.disabled = true;
   observer.unobserve(refs.guard);
   refs.loadMoreBtn.classList.add('is-hidden');
   refs.form.elements.submit.disabled = true;
+  refs.loader.classList.remove('is-hidden');
 }
+
 //-------------------------------------------------------
 
-async function showImages(searchData, page) {
-  refs.loader.classList.remove('is-hidden');
+async function makeRequest(searchQuery) {
   try {
-    const { data, totalHits } = await getImages(searchData, page);
-    if (!processData(data, totalHits, page)) {
+    const { data, totalHits } = await getImages(searchQuery, state.page);
+    if (data.length === 0) {
       throw new Error(
         'Sorry, there are no images matching your search query. Please try again.'
       );
     }
-    renderImages(data, totalHits);
-    renderedImagesAmount += data.length;
-    prepareLoadMoreSettings(renderedImagesAmount, totalHits);
-    gallery.refresh();
+    if (state.page === 1) {
+      Notify.info(`Hooray! We found ${totalHits} images.`);
+    }
+    return { data, totalHits };
   } catch (error) {
     Notify.failure(error.message);
+    return null;
   }
-  refs.loader.classList.add('is-hidden');
 }
 
 //-------------------------------------------------------
-function processData(data, totalHits, page) {
-  if (data.length === 0) {
-    return false;
-  }
-  if (page === 1) {
-    Notify.info(`Hooray! We found ${totalHits} images.`);
-  }
-  return true;
-}
-//-------------------------------------------------------
 
-function renderImages(data) {
+function showRequestResult(data) {
   const dataPrepared = data.map(img => ({
     ...img,
     likes: formatNumber(img.likes),
@@ -101,34 +116,46 @@ function renderImages(data) {
     'beforeend',
     markup({ data: dataPrepared, sprite })
   );
+
+  state.renderedImagesAmount += data.length;
+  gallery.refresh();
 }
 
 //-------------------------------------------------------
 
-function prepareLoadMoreSettings(renderedImagesAmount, totalHits) {
-  if (renderedImagesAmount === totalHits) {
-    Notify.info("We're sorry, but you've reached the end of search results.");
-    if (refs.checkbox.checked) {
-      observer.unobserve(refs.guard);
-    } else {
-      refs.loadMoreBtn.classList.add('is-hidden');
-    }
-    return;
-  }
+function processAfterRequest() {
+  refs.loader.classList.add('is-hidden');
+  refs.form.elements.submit.disabled = false;
+  refs.checkbox.disabled = false;
 
-  if (refs.checkbox.checked) {
+  if (!state.foundImagesAmount) {
+    refs.loadMoreBtn.classList.add('is-hidden');
+    observer.unobserve(refs.guard);
+  } else if (state.renderedImagesAmount >= state.foundImagesAmount) {
+    Notify.info("We're sorry, but you've reached the end of search results.");
+    refs.loadMoreBtn.classList.add('is-hidden');
+    observer.unobserve(refs.guard);
+  } else if (refs.checkbox.checked) {
     observer.observe(refs.guard);
+    refs.loadMoreBtn.classList.add('is-hidden');
   } else {
+    observer.unobserve(refs.guard);
     refs.loadMoreBtn.classList.remove('is-hidden');
   }
 }
+
 //-------------------------------------------------------
 
 async function loadMore() {
-  page += 1;
-  refs.loadMoreBtn.classList.add('is-hidden');
-  await showImages(searchData, page);
+  state.page += 1;
+  processBeforeRequest();
+  const requestResult = await makeRequest(state.searchQuery, state.page);
+  if (!requestResult) {
+    return;
+  }
+  showRequestResult(requestResult.data);
   setSmoothScroll();
+  processAfterRequest(requestResult.totalHits);
 }
 
 //-------------------------------------------------------
@@ -152,5 +179,3 @@ function setSmoothScroll() {
     behavior: 'smooth',
   });
 }
-
-//-------------------------------------------------------
