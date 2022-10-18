@@ -1,5 +1,5 @@
 export function getRefs() {
-  formEl = document.querySelector('#search-form');
+  const formEl = document.querySelector('#search-form');
   return {
     form: formEl,
     gallery: document.querySelector('.gallery'),
