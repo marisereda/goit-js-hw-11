@@ -4,7 +4,7 @@ The **Image search project** is a front-end part of a keyword search and image
 viewer application. The user will enter a search string in the text field, and
 when submitting the form, an HTTP request is made.
 
-For HTTP requests the axios library is used.
+For HTTP requests the Axios library is used.
 
 The project demonstrates the use of back-end queries with async/await syntax.
 
